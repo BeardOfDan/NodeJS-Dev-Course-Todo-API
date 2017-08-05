@@ -23,8 +23,12 @@ app.post("/todos", (req, res, next) => {
   });
 });
 
-app.get("/todos/individualIdNumber", (req, res, next) => {
-
+app.get("/todos", (req, res, next) => {
+  Todo.find().then((todos) => {
+    res.send({todos});
+  }, (err) => {
+    res.status(400).send(err);
+  });
 });
 
 app.listen(3000, () => {
