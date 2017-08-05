@@ -5,7 +5,9 @@ const mongoose = require('mongoose');
 // mongoose uses its promise library, instead of the default of callbacks
 mongoose.Promise = global.Promise;
 
-mongoose.connect("mongodb://localhost:27017/TodoApp", {
+const mongooseURI = process.env.MONGODB_URI || "mongodb://localhost:27017/TodoApp";
+
+mongoose.connect(mongooseURI, {
   useMongoClient: true,
 });
 
