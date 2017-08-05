@@ -12,7 +12,9 @@ const todos = [{
   text: "First test todo"
 }, {
   _id: new ObjectID(),
-  text: "Second test todo"
+  text: "Second test todo",
+  completed: true,
+  completedAt: 1234
 }];
 
 // ensures that the database is empty before every test is run
@@ -143,3 +145,61 @@ describe("DELETE /todos/:id", () => {
       .end(done);
   });
 }); // end of describe DELETE /todos/:id
+
+describe("PATCH /todos/:id", () => {
+  it("should update the todo text", (done) => {
+    let id = todos[0]._id.toString();
+    let newText = "updated text for PATCH test";
+
+    request(app)
+      .patch(`/todos/${id}`)
+      .send({"text": newText, "completed": true})
+      .expect(200)
+      .expect((req, res, next) => {
+        let thisTodo = req.body.todo;
+        expect(thisTodo.text).toBe(newText);
+        expect(thisTodo.completed).toBe(true);
+        expect(thisTodo.completedAt).toBeA("number");
+    })
+      .end(done);
+  });
+
+  it("should clear completedAt when todo is not completed", (done) => {
+    let id = todos[1]._id.toString();
+    let newText = "changed text for another PATCH test";
+
+    request(app)
+      .patch(`/todos/${id}`)
+      .send({"text": newText, "completed": false})
+      .expect(200)
+      .expect((req, res, next) => {
+        let thisTodo = req.body.todo;
+        expect(thisTodo.text).toBe(newText);
+        expect(thisTodo.completed).toBe(false);
+        expect(thisTodo.completedAt).toNotExist();
+    })
+      .end(done);
+  });
+
+  it("should return 404 for an invalid id", (done) => {
+    let invalidId = todos[1]._id.toString();
+    invalidId += "asdf124";
+
+    request(app)
+      .patch(`/todos/${invalidId}`)
+      .send({"text": "this data does not matter",})
+      .expect(404)
+      .end(done);
+  });
+
+  it("should return 404 for a non-existing id", (done) => {
+    let unusedId = new ObjectID();
+
+    request(app)
+      .patch(`/todos/${unusedId}`)
+      .send({"text": "irrelevant data"})
+      .expect(404)
+      .end(done);
+  });
+}); // end of describe PATCH /todos/:id
+
