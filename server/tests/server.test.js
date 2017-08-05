@@ -101,7 +101,7 @@ describe("GET /todos/:id", () => {
       .expect(404)
       .end(done);
   });
-});
+}); // end of describe GET /todos/:id
 
 describe("DELETE /todos/:id", () => {
   it("should remove a todo", (done) => {
@@ -142,4 +142,4 @@ describe("DELETE /todos/:id", () => {
       .expect(404)
       .end(done);
   });
-});
+}); // end of describe DELETE /todos/:id
