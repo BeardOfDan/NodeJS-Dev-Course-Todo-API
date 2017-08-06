@@ -18,6 +18,10 @@ const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 
+// =====================================
+// ============= POST ==================
+// =====================================
+
 app.post("/todos", (req, res, next) => {
   let todo = new Todo({
     text: req.body.text
@@ -30,11 +34,39 @@ app.post("/todos", (req, res, next) => {
   });
 });
 
+app.post("/users", (req, res, next) => {
+  let userInfo = _.pick(req.body, ["email", "password"]);
+  let user = new User(userInfo);
+
+  user.save().then(() => {
+    return user.generateAuthToken();
+  })
+    .then((token) => {
+      res.header("x-auth", token).send(user);
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+  });
+});
+
+// =====================================
+// ============= GET ===================
+// =====================================
+
 app.get("/todos", (req, res, next) => {
   Todo.find().then((todos) => {
     res.send({todos});
   }, (err) => {
     res.status(400).send(err);
+  });
+});
+
+app.get("/users", (req, res, next) => {
+  User.find().then((users) => {
+    res.send({users});
+  })
+    .catch((err) => {
+      res.status(400).send(err);
   });
 });
 
@@ -55,6 +87,10 @@ app.get("/todos/:id", (req, res, next) => {
   });
 });
 
+// =====================================
+// ============= DELETE ================
+// =====================================
+
 app.delete("/todos/:id", (req, res, next) => {
   let id = req.params.id;
 
@@ -72,6 +108,10 @@ app.delete("/todos/:id", (req, res, next) => {
     res.status(400).send();
   });
 });
+
+// =====================================
+// ============= PATCH =================
+// =====================================
 
 app.patch("/todos/:id", (req, res, next) => {
   let id = req.params.id;
