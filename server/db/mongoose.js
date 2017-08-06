@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 // mongoose uses its promise library, instead of the default of callbacks
 mongoose.Promise = global.Promise;
 
-              // process.env.MONGODB_URI is from mLab (a heroku addon)
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/TodoApp", {
+              // process.env.MONGODB_URI gets a default value in config.js
+mongoose.connect(process.env.MONGODB_URI, {
   useMongoClient: true,
 });
 

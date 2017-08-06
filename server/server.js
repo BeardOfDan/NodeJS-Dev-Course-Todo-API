@@ -1,17 +1,20 @@
 "use strict";
 
+require("./config/config");
+
 const _ = require('lodash');
-const {mongoose} = require('./db/mongoose');
 const {ObjectID} = require('mongodb');
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
 
 let app = express();
 
-const PORT = process.env.PORT || 3000;
+// default value for process.env.PORT is given in config.js
+const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 
