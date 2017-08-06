@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
+const {authenticate} = require("./middleware/authenticate");
 
 let app = express();
 
@@ -68,6 +69,10 @@ app.get("/users", (req, res, next) => {
     .catch((err) => {
       res.status(400).send(err);
   });
+});
+
+app.get("/users/me", authenticate, (req, res, next) => {
+  res.send(req.user);
 });
 
 app.get("/todos/:id", (req, res, next) => {
