@@ -43,7 +43,7 @@ app.post("/users/login", (req, res, next) => {
       return user.generateAuthToken()
         .then((token) => {
           res.header("x-auth", token).send(user);
-        })
+        });
     })
     .catch((err) => {
       res.status(400).send();
