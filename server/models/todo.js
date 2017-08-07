@@ -17,6 +17,10 @@ let Todo = mongoose.model("Todo", {
     // Unix time stamp
     type: Number,
     default: null
+  },
+  _creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
   }
 });
 
