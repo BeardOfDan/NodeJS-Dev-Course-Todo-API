@@ -35,6 +35,21 @@ app.post("/todos", (req, res, next) => {
   });
 });
 
+app.post("/users/login", (req, res, next) => {
+  let credentials = _.pick(req.body, ["email", "password"]);
+
+  User.findByCredentials(credentials.email, credentials.password)
+    .then((user) => {
+      return user.generateAuthToken()
+        .then((token) => {
+          res.header("x-auth", token).send(user);
+        })
+    })
+    .catch((err) => {
+      res.status(400).send();
+    });
+});
+
 app.post("/users", (req, res, next) => {
   let userInfo = _.pick(req.body, ["email", "password"]);
   let user = new User(userInfo);
@@ -54,27 +69,6 @@ app.post("/users", (req, res, next) => {
 // ============= GET ===================
 // =====================================
 
-app.get("/todos", (req, res, next) => {
-  Todo.find().then((todos) => {
-    res.send({todos});
-  }, (err) => {
-    res.status(400).send(err);
-  });
-});
-
-app.get("/users", (req, res, next) => {
-  User.find().then((users) => {
-    res.send({users});
-  })
-    .catch((err) => {
-      res.status(400).send(err);
-  });
-});
-
-app.get("/users/me", authenticate, (req, res, next) => {
-  res.send(req.user);
-});
-
 app.get("/todos/:id", (req, res, next) => {
   let id = req.params.id;
 
@@ -89,6 +83,27 @@ app.get("/todos/:id", (req, res, next) => {
     res.status(404).send();
   }).catch((err) => {
     res.status(400).send();
+  });
+});
+
+app.get("/todos", (req, res, next) => {
+  Todo.find().then((todos) => {
+    res.send({todos});
+  }, (err) => {
+    res.status(400).send(err);
+  });
+});
+
+app.get("/users/me", authenticate, (req, res, next) => {
+  res.send(req.user);
+});
+
+app.get("/users", (req, res, next) => {
+  User.find().then((users) => {
+    res.send({users});
+  })
+    .catch((err) => {
+      res.status(400).send(err);
   });
 });
 

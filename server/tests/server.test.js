@@ -260,7 +260,7 @@ describe("POST /users", () => {
       .post("/users")
       .send({
         email: users[0].email,
-        password: "a2#Dwn0234sdpwfr8%LN3B"
+        password: "a2#Dwn0234sdpwfr8%LN3B" // valid, but otherwise random password
       })
       .expect(400)
       .end(done);
