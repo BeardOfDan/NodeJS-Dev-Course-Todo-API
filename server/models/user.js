@@ -1,5 +1,6 @@
 "use strict";
 
+const bcrypt = require("bcryptjs");
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
@@ -72,6 +73,25 @@ UserSchema.statics.findByToken = function (token) {
     "tokens.access": "auth"
   });
 };
+
+UserSchema.pre("save", function (next) {
+  let user = this;
+
+  // if the password is still plain text
+  if(user.isModified("password")) {
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(user.password, salt, (err, hash) => {
+        if (err) {
+          // return console.log("There was an error!");
+        }
+        user.password = hash;
+        next();
+      });
+    });
+  } else { // the password is already hashed
+    next();
+  }
+});
 
 let User = mongoose.model("User", UserSchema);
 
