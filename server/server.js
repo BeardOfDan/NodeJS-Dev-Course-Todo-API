@@ -35,6 +35,13 @@ app.post("/todos", (req, res, next) => {
   });
 });
 
+// should ensure that they are not already logged in
+  // check the header for x-auth
+  // if it exists, check for a match in the user's tokens array
+    // if a match is found, then redirect them to the home page
+      // or just do an error
+        // ex. res.status(40?).send();
+    // if no match is found, then log them in
 app.post("/users/login", (req, res, next) => {
   let credentials = _.pick(req.body, ["email", "password"]);
 
@@ -129,6 +136,8 @@ app.delete("/todos/:id", (req, res, next) => {
   });
 });
 
+// consider making an identical version of this that's just /logout
+  // for a humanly intuitive way of logging out without using the front-end
 app.delete("/users/me/token", authenticate, (req, res, next) => {
   req.user.removeToken(req.token)
     .then(() => {

@@ -325,3 +325,24 @@ describe("POST /users/login", () => {
   });
 }); // end of describe POST /users/login
 
+// should also do a test to make sure that if the user is logged
+//  in on multiple devices, that the correct token is deleted
+//  and not one for another device
+describe("DELETE /users/me/token", () => {
+  it("should remove auth token on logout", (done) => {
+    request(app)
+      .delete("/users/me/token")
+      .set("x-auth", users[0].tokens[0].token)
+      .expect(200)
+      .end(() => {
+        User.findById(users[0]._id)
+          .then((user) => {
+            expect(user.tokens.length).toBe(0);
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+  });
+}); // end of describe DELETE /users/me/token
